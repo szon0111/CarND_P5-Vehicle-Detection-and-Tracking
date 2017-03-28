@@ -109,15 +109,17 @@ if __name__ == '__main__':
 
         # Show image with windows
         plt.imshow(window_img)
+        plt.axis("off")
         plt.show()
 
         # Get heat map
         box.add_windows(hot_windows)
         heatmap = box.get_heatmap(image)
-        heatmap = box.apply_threshold(heatmap, threshold=10)
+        heatmap = box.apply_threshold(heatmap, threshold=6)
         heatmap = np.clip(heatmap, 0, 255)
         # Show heatmap
         plt.imshow(heatmap, cmap='hot')
+        plt.axis("off")
         plt.show()
 
         # Show image with final bounding boxes
@@ -125,4 +127,5 @@ if __name__ == '__main__':
         draw_img = box.draw_labeled_boxes(np.copy(image), labels)
         print(labels[1], 'cars found')
         plt.imshow(draw_img)
+        plt.axis("off")
         plt.show()

@@ -3,11 +3,12 @@
 [//]: # (Image References)
 [image1]: https://cloud.githubusercontent.com/assets/10526591/24391851/3b6d5eda-13cc-11e7-907c-b7b9e92f6ba3.png "veh_HOG"
 [image2]: https://cloud.githubusercontent.com/assets/10526591/24391850/3b6c6642-13cc-11e7-8a88-fde3caacd3ce.png "non-veh_HOG"
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
+[image3]: https://cloud.githubusercontent.com/assets/10526591/24392978/3437376c-13d1-11e7-8c05-b7646cee237b.png "windows"
+[image4]: https://cloud.githubusercontent.com/assets/10526591/24393201/21c493da-13d2-11e7-9eec-2b12bcec70ac.png "ex1"
+[image5]: https://cloud.githubusercontent.com/assets/10526591/24393202/21ef9530-13d2-11e7-815b-12a685a6875e.png "ex2"
+[image6]: https://cloud.githubusercontent.com/assets/10526591/24393538/78a3100e-13d3-11e7-8e15-9a063707b08b.png "ex3"
+[image7]: https://cloud.githubusercontent.com/assets/10526591/24393539/78a335c0-13d3-11e7-91b4-cc732e70e318.png "heatmap"
+[image8]: https://cloud.githubusercontent.com/assets/10526591/24393537/78a25312-13d3-11e7-8ff9-3ce823d5baf9.png "box"
 [video1]: https://youtu.be/_23T4mz0IV0 "Video"
 
 ### Deliverables
@@ -67,41 +68,58 @@ The resulting test accuracy came out to be 98.65%.
 
 ### Sliding Window Search
 
-#### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+#### 1. Describe how you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to set different search areas for 3 different window sizes. The function is `find_cars()` in `extract.py` and the 
+The function is `find_cars()` in `extract.py` and the overall pipeline can be seen in the `Box()` class in `box.py`. This function searches the HOG features for the image once, instead of repeating the feature extraction for individual windows, which greatly reduces computation time. The model outputs, parameter settings, and window settings can be seen in lines 68 ~ 89 of `box.py` and lines 10 ~ 24, lines 70 ~ 75 of `video.py`.
 
-![alt text][image3]
+I limited the search are to the lower half of the image, in order to avoid detecting non-vehicle objects. I then decided to use small windows for the upper part of the search area and 2 larger sized windows for the rest of the search area. This was implemented by scaling the image in 3 different sizes(1.0, 1.5, and 2.0) The windows are also shown in 3 different colors(blue, green, red).
+
+I decided to overlap the windows by 75%, which was the optimal value with the right balance between accuracy and computation time, by setting `cells_per_step`(line 146) in `extract.py` to 2.
+
+Here are the windows and search areas:
+
+![windows][image3]
+
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Through trial and error, I decided to use the parametes shown in the table earlier. Setting cells_per_step to 1, which gives a 87.5% overlap, gave better results but the longer computation time was not worth the small improvement. Once again, extracting hog features only once per image with the function `find_cars()` greatly improved the performance.
 
-![alt text][image4]
+Here are some examples of windows on the test images:
+
+
+![ex1][image4]
+![ex2][image5]
 ---
+
+#### Filter for False Positives
+
+I recorded the positions of positive detections in each frame of the video.  From the 15 positive detections aggregated through the `Box()` class, I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+
+Here's an example result showing the heatmap from a series of frames of video
+
+##### Here is the image with the window detections once again:
+
+![alt text][image6]
+
+### Here is the corresponding heatmap:
+![alt text][image7]
+
+### Here the resulting bounding boxes are drawn:
+![alt text][image8]
+
+
+#### Smoothing Detections
+
+To make the detections look smoother, I stored the detection results of the previouse 15 frames before drawing the bounding boxes on the vehicles.
+This way, boxes do not drastically change in size and location per frame.
+The implemention can be seen in the `add_windows()` and `get_heatmap()` methods in `box.py`.
+
 
 ### Video Implementation
 
 The output video is `project_video_output.mp4`.
 The **[video]** is also available on Youtube
-
-
-#### 2. Describe how  you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
-
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
-
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
-
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
 
 
 ---
@@ -110,5 +128,5 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-The major issue with the SVM approach is parameter tuning and long computation time. It took about 20 minutes to produce a 50 second video. I will explore deep learning methods such as YOLO for future work.
+The major issue with the SVM approach is parameter tuning and long computation time. I felt like I am overfitting to the project video too much by tuning the parameters to get the best restults. Also, it took about 20 minutes to produce a 50 second video, which is obviously not going to work for real time detection. I am  going to explore deep learning methods such as YOLO for future work, which seems to be a great choice for real time detection.
 
