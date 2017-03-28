@@ -4,11 +4,11 @@
 [image1]: https://cloud.githubusercontent.com/assets/10526591/24391851/3b6d5eda-13cc-11e7-907c-b7b9e92f6ba3.png "veh_HOG"
 [image2]: https://cloud.githubusercontent.com/assets/10526591/24391850/3b6c6642-13cc-11e7-8a88-fde3caacd3ce.png "non-veh_HOG"
 [image3]: https://cloud.githubusercontent.com/assets/10526591/24392978/3437376c-13d1-11e7-8c05-b7646cee237b.png "windows"
-[image4]: https://cloud.githubusercontent.com/assets/10526591/24393201/21c493da-13d2-11e7-9eec-2b12bcec70ac.png "ex1"
-[image5]: https://cloud.githubusercontent.com/assets/10526591/24393202/21ef9530-13d2-11e7-815b-12a685a6875e.png "ex2"
-[image6]: https://cloud.githubusercontent.com/assets/10526591/24393538/78a3100e-13d3-11e7-8e15-9a063707b08b.png "ex3"
-[image7]: https://cloud.githubusercontent.com/assets/10526591/24393539/78a335c0-13d3-11e7-91b4-cc732e70e318.png "heatmap"
-[image8]: https://cloud.githubusercontent.com/assets/10526591/24393537/78a25312-13d3-11e7-8ff9-3ce823d5baf9.png "box"
+[image4]: https://cloud.githubusercontent.com/assets/10526591/24393932/0057031a-13d5-11e7-9914-225f08d6a50a.png "ex1"
+[image5]: https://cloud.githubusercontent.com/assets/10526591/24393933/00571382-13d5-11e7-811f-ab5795eb777c.png "ex2"
+[image6]: https://cloud.githubusercontent.com/assets/10526591/24393934/005933ce-13d5-11e7-8b15-bbb3d8a8a088.png "ex3"
+[image7]: https://cloud.githubusercontent.com/assets/10526591/24393931/003913e6-13d5-11e7-9986-05d326c6736f.png "heatmap"
+[image8]: https://cloud.githubusercontent.com/assets/10526591/24393930/0016f158-13d5-11e7-914f-3d2810bdc0c2.png "box"
 [video1]: https://youtu.be/_23T4mz0IV0 "Video"
 
 ### Deliverables
@@ -17,7 +17,7 @@
 
 My project includes the following files (in image processing order):
 * `train.py` to train the Linear SVM model with set parameters. The training data and parameters are saved in a pickle file for later use.
-* 'extract.py` to extract features using hog sub-sampling and make predictions.
+* `extract.py` to extract features using hog sub-sampling and make predictions.
 * `box.py` to store windows found over a set number of frames, get heatmap, and return image with final bounding box
 * `video.py` to produce the video with bounding boxes and number of detected vehicles displayed.
 * `project_video_output` is the final video with smoother detection by accounting for previous frames
@@ -33,12 +33,11 @@ The dataset used for this project includes 8,792 vehicle images and 8,968 non-ve
 
 ### Histogram of Oriented Gradients (HOG)
 
-#### 1. Explain how you extracted HOG features from the training images.
+#### 1. HOG Feature Extraction
+The code for this step is contained in the file `extract.py`. More specifically, the function `get_hog_features()` with defined HOG parameters does the work using scikit-learn's `hog()` function.
 
-The code for this step is contained in the file `extract.py`. More specifically, the function `get_hog_features() with defined HOG parameters does the work using scikit-learn's `hog()` function.
 
-
-#### 2. Explain how you settled on your final choice of HOG parameters.
+#### 2. Final HOG parameters.
 
 To extract the optimal HOG features, I tried different color spaces, number of HOG orienations, HOG channels, pixels per cell, and cells per block.
 After several trial-and-errors and accounting for computation time, the following parameters were chosen:
@@ -58,9 +57,9 @@ Here are examples of HOG features on vechile and non-vehicle images (gray colors
 ![veh][image1]
 ![non-veh][image2]
 
-*The above images can be reproduced by running the `extract.py` file.
+*The above images can be reproduced by running the `extract.py` file.*
 
-#### 3. Describe how  you trained a classifier using your selected HOG features.
+#### 3. Classifier Model Training
 
 I trained a Linear SVM model using the parameters shown above with histogram features and spatial intensity (shown in the beginning of `train.py`). The `LinerSVM()` function in scikit-learn was used. 
 The data is shuffled and divided into training and testing set before training. (lines 54 ~56).
@@ -68,7 +67,7 @@ The resulting test accuracy came out to be 98.65%.
 
 ### Sliding Window Search
 
-#### 1. Describe how you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+#### 1. Implementations and Parameters
 
 The function is `find_cars()` in `extract.py` and the overall pipeline can be seen in the `Box()` class in `box.py`. This function searches the HOG features for the image once, instead of repeating the feature extraction for individual windows, which greatly reduces computation time. The model outputs, parameter settings, and window settings can be seen in lines 68 ~ 89 of `box.py` and lines 10 ~ 24, lines 70 ~ 75 of `video.py`.
 
@@ -81,7 +80,7 @@ Here are the windows and search areas:
 ![windows][image3]
 
 
-#### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+#### 2. Examples on test images and Performance Optimization.
 
 Through trial and error, I decided to use the parametes shown in the table earlier. Setting cells_per_step to 1, which gives a 87.5% overlap, gave better results but the longer computation time was not worth the small improvement. Once again, extracting hog features only once per image with the function `find_cars()` greatly improved the performance.
 
@@ -98,18 +97,20 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video
 
-##### Here is the image with the window detections once again:
+**Here is the image with the window detections once again:**
 
 ![alt text][image6]
 
-### Here is the corresponding heatmap:
+**Here is the corresponding heatmap:**
+
 ![alt text][image7]
 
-### Here the resulting bounding boxes are drawn:
+**Here the resulting bounding boxes are drawn:**
+
 ![alt text][image8]
 
 
-#### Smoothing Detections
+### Smoothing Detections
 
 To make the detections look smoother, I stored the detection results of the previouse 15 frames before drawing the bounding boxes on the vehicles.
 This way, boxes do not drastically change in size and location per frame.
@@ -126,7 +127,7 @@ The **[video]** is also available on Youtube
 
 ### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+#### 1. Limitations
 
 The major issue with the SVM approach is parameter tuning and long computation time. I felt like I am overfitting to the project video too much by tuning the parameters to get the best restults. Also, it took about 20 minutes to produce a 50 second video, which is obviously not going to work for real time detection. I am  going to explore deep learning methods such as YOLO for future work, which seems to be a great choice for real time detection.
 
