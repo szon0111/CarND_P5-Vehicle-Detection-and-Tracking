@@ -9,7 +9,7 @@
 [image6]: https://cloud.githubusercontent.com/assets/10526591/24394287/542b1746-13d6-11e7-9654-4f3cbf7a8550.png "ex3"
 [image7]: https://cloud.githubusercontent.com/assets/10526591/24394285/54234c46-13d6-11e7-8d68-2c4dc1e04d96.png "heatmap"
 [image8]: https://cloud.githubusercontent.com/assets/10526591/24394286/5423c20c-13d6-11e7-8abb-793da01a6b8d.png "box"
-[video1]: https://youtu.be/_23T4mz0IV0 "Video"
+[video]: https://youtu.be/_23T4mz0IV0 "Video"
 
 ### Deliverables
 
