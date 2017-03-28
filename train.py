@@ -8,7 +8,7 @@ import time
 import extract
 
 # Set parameters
-color_space = 'YUV'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb, GRAY
+color_space = 'YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb, GRAY
 orient = 9  # HOG orientations
 pix_per_cell = 8  # HOG pixels per cell
 cell_per_block = 2  # HOG cells per block
@@ -81,6 +81,6 @@ classifier_pickle = {'svc': svc,
                      'hog_feat': hog_feat
                      }
 
-with open('./classifier.p', mode='wb') as p:
+with open('./classifier_YCrCb.p', mode='wb') as p:
     pickle.dump(classifier_pickle, p, pickle.HIGHEST_PROTOCOL)
 print("Classifier data saved")

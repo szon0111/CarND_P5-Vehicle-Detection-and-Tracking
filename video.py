@@ -1,15 +1,14 @@
 import numpy as np
 import cv2
 import pickle
-from heatmap import get_heatmap, get_labels
+from scipy.ndimage.measurements import label
 from moviepy.video.io.VideoFileClip import VideoFileClip
-
 
 from box import Box
 from extract import find_cars
 
 # Load training data and parameters
-with open('./classifier.p', mode='rb') as p:
+with open('./classifier_YCrCb.p', mode='rb') as p:
     classifier_data = pickle.load(p)
 svc = classifier_data['svc']
 X_scaler = classifier_data['X_scaler']
@@ -32,41 +31,36 @@ def video(input_video):
     original_video = '{}.mp4'.format(input_video)
     video = VideoFileClip(original_video)
     output_video = video.fl_image(process)
-    output_video.write_videofile(
-        '{}_output.mp4'.format(input_video), audio=False)
+    output_video.write_videofile('{}_output.mp4'.format(input_video), audio=False)
 
 
 def process(image):
     """
-    Process undistortion, thresholding, warp, line detection
-    Annotate curvature and vehicle position values to frame
+    Extract features, search windows, add heatmap, and draw final bounding boxes
     """
-    box = Box(keep=15)
-    draw_image = np.copy(image)
     hot_windows = []
+    # Append the 3 different size windows
     for i in range(len(ystart)):
         hot_windows.append(find_cars(image, ystart[i], ystop[i], scale[i], svc, X_scaler,
                                      orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, show_all=False))
-    window_img = box.draw_boxes(draw_image, hot_windows[0],
-                                color=color[0], thick=4)
-    window_img = box.draw_boxes(window_img, hot_windows[1],
-                                color=color[1], thick=4)
-    window_img = box.draw_boxes(window_img, hot_windows[2],
-                                color=color[2], thick=4)
     hot_windows = [item for sublist in hot_windows for item in sublist]
 
-    # Add windows to Box class
-    if hot_windows:
+    print(len(hot_windows))
+
+    # Add windows to list
+    if len(hot_windows) > 0:
         box.add_windows(hot_windows)
-    boxes = box.get_windows()
-    # Get heat map
-    heatmap = get_heatmap(image, boxes, threshold=15)
-    # Draw final bounding boxes
-    labels = get_labels(heatmap)
-    draw_img = box.draw_labeled_boxes(draw_image, labels)
+    print(len(box.windows_list))
+    # Get heatmap from aggregated windows list
+    heatmap = box.get_heatmap(image)
+    heatmap = box.apply_threshold(heatmap, threshold=15)
+    # heatmap = np.clip(heatmap, 0, 255)
+    # Draw final bounding boxes from heatmap
+    labels = label(heatmap)
+    draw_img = box.draw_labeled_boxes(np.copy(image), labels)
     # Annotate number of vehicles to video
     num_vehicles = labels[1]
-    cv2.putText(draw_img, 'number of vehicles: {}'.format(num_vehicles),
+    cv2.putText(draw_img, 'Number of vehicles: {}'.format(num_vehicles),
                 (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255, 255, 255), thickness=2)
 
     return draw_img
@@ -77,4 +71,5 @@ if __name__ == '__main__':
     ystop = [528, 592, 656]
     scale = [1.0, 1.5, 2.0]
     color = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
-    video('test_video')
+    box = Box(keep=15)
+    video('project_video')
