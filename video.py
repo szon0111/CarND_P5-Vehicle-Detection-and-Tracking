@@ -8,7 +8,7 @@ from box import Box
 from extract import find_cars
 
 # Load training data and parameters
-with open('./classifier_YCrCb.p', mode='rb') as p:
+with open('./classifier.p', mode='rb') as p:
     classifier_data = pickle.load(p)
 svc = classifier_data['svc']
 X_scaler = classifier_data['X_scaler']
