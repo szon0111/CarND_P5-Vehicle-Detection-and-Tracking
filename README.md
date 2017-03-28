@@ -23,7 +23,7 @@ Project Deliverables
 * `extract.py` to extract features using hog sub-sampling and make predictions.
 * `box.py` to store windows found over a set number of frames, get heatmap, and return image with final bounding box
 * `video.py` to produce the video with bounding boxes and number of detected vehicles displayed.
-* `project_video_output` is the final video with smoother detection by accounting for previous frames
+* `project_video_output.mp4` is the final video with smoother detection by accounting for previous frames
 
 Results
 ---
