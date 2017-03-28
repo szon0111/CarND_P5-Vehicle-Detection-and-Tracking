@@ -1,14 +1,14 @@
 # **Vehicle Detection Project**
 
 [//]: # (Image References)
-[image1]: https://cloud.githubusercontent.com/assets/10526591/24391851/3b6d5eda-13cc-11e7-907c-b7b9e92f6ba3.png "veh_HOG"
-[image2]: https://cloud.githubusercontent.com/assets/10526591/24391850/3b6c6642-13cc-11e7-8a88-fde3caacd3ce.png "non-veh_HOG"
+[image1]: https://cloud.githubusercontent.com/assets/10526591/24394334/8bb0759e-13d6-11e7-9131-b9ea57a2acd0.png "veh_HOG"
+[image2]: https://cloud.githubusercontent.com/assets/10526591/24394333/8baee7e2-13d6-11e7-84ee-67af8d45ff0a.png "non-veh_HOG"
 [image3]: https://cloud.githubusercontent.com/assets/10526591/24392978/3437376c-13d1-11e7-8c05-b7646cee237b.png "windows"
-[image4]: https://cloud.githubusercontent.com/assets/10526591/24393932/0057031a-13d5-11e7-9914-225f08d6a50a.png "ex1"
-[image5]: https://cloud.githubusercontent.com/assets/10526591/24393933/00571382-13d5-11e7-811f-ab5795eb777c.png "ex2"
-[image6]: https://cloud.githubusercontent.com/assets/10526591/24393934/005933ce-13d5-11e7-8b15-bbb3d8a8a088.png "ex3"
-[image7]: https://cloud.githubusercontent.com/assets/10526591/24393931/003913e6-13d5-11e7-9986-05d326c6736f.png "heatmap"
-[image8]: https://cloud.githubusercontent.com/assets/10526591/24393930/0016f158-13d5-11e7-914f-3d2810bdc0c2.png "box"
+[image4]: https://cloud.githubusercontent.com/assets/10526591/24394284/54222e38-13d6-11e7-88ed-7cb688e6604d.png "ex1"
+[image5]: https://cloud.githubusercontent.com/assets/10526591/24394288/542d0830-13d6-11e7-8843-51b8274dc19c.png "ex2"
+[image6]: https://cloud.githubusercontent.com/assets/10526591/24394287/542b1746-13d6-11e7-9654-4f3cbf7a8550.png "ex3"
+[image7]: https://cloud.githubusercontent.com/assets/10526591/24394285/54234c46-13d6-11e7-8d68-2c4dc1e04d96.png "heatmap"
+[image8]: https://cloud.githubusercontent.com/assets/10526591/24394286/5423c20c-13d6-11e7-8abb-793da01a6b8d.png "box"
 [video1]: https://youtu.be/_23T4mz0IV0 "Video"
 
 ### Deliverables
